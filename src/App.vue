@@ -1,16 +1,18 @@
 <template>
   <div id="app">
     <Button @click.native="showPopup"/>
+    <PopupView v-if="popupOpen"/>
   </div>
 </template>
 
 <script>
 import Button from './components/Button.vue'
+import PopupView from './components/PopupView.vue'
 
 export default {
   name: 'App',
   components: {
-    Button
+    Button, PopupView
   },
   data() {
     return {
