@@ -1,28 +1,22 @@
 <template>
   <div id="app">
-    <Button @click.native="showPopup"/>
-    <PopupView v-if="popupOpen"/>
+    <Button/>
+    <PopupView v-if="POPUP"/>
   </div>
 </template>
 
 <script>
 import Button from './components/Button.vue'
 import PopupView from './components/PopupView.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
   components: {
     Button, PopupView
   },
-  data() {
-    return {
-      popupOpen: false
-    }
-  },
-  methods: {
-    showPopup() {
-      this.popupOpen = true
-    }
+  computed: {
+    ...mapGetters(['POPUP'])
   }
 
 }

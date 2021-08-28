@@ -1,14 +1,17 @@
 <template>
-  <button class="button">
+  <button class="button" @click="SHOW_POPUP">
     Налоговый вычет
   </button>
 </template>
 
 <script>
+import {mapActions} from 'vuex'
+
 export default {
   name: 'Button',
-  props: {
-  }
+    methods: {
+    ...mapActions(['SHOW_POPUP'])
+  },
 }
 </script>
 

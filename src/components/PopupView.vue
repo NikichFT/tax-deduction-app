@@ -9,20 +9,20 @@
       </div>
       <div class="popup__title">Ваша зарплата в месяц</div>
       <div class="popup__input-area">
-        <input type="text" id="popup__input" class="popup__input" placeholder=" Введите данные">
-        <label for="popup__input" class="popup__input-label">Поле обязательно для заполнения</label>
+        <input type="text" id="popup__input" class="popup__input" placeholder=" Введите данные" v-model="valueInput" @change="VALUE_INPUT" @blur="appendCurr" @focus="clearCurr" @keypress="CLEAR_YEAR">
+        <label for="popup__input" v-if="inputError" class="popup__input-label">Поле обязательно для заполнения</label>
       </div>
-      <div class="calc-button">Рассчитать</div>
+      <div class="calc-button" @click="calcDeduction">Рассчитать</div>
       <DeductionView/>
       <div class="popup-select">
         <div class="popup__title">Что уменьшаем?</div>
         <div class="select-area">
-          <div class="select-area__select-btn selected">Платеж</div>
-          <div class="select-area__select-btn">Срок</div>
+          <div id='payment' :class="`${DEACREASE.payment ? 'selected' : ''}`" @click="CHOOSE_DECREASE" class="select-area__select-btn">Платеж</div>
+          <div id='time' :class="`${DEACREASE.time ? 'selected' : ''}`" @click="CHOOSE_DECREASE" class="select-area__select-btn">Срок</div>
         </div>
       </div>
     </div>
-    <div class="add-btn">Добавить</div>
+    <button class="add-btn" v-bind:disabled="!VALIDATION" @click="SEND_TO_SERVER">Добавить</button>
   </div>
   </div>
 </template>
@@ -30,11 +30,58 @@
 <script>
 import CloseBtn from './CloseBtn.vue'
 import DeductionView from './DeductionView.vue'
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'PopupView',
+  data(){
+      return {
+        valueInput: '',
+        inputError: false,
+      }
+  },
   components: {
     CloseBtn, DeductionView
+  },
+  methods: {
+    ...mapActions(['VALUE_INPUT', 'CALC_DEDUCTION', 'CHOOSE_DECREASE', 'VALIDATE', 'CLEAR_YEAR', 'SEND_TO_SERVER']),
+
+    appendCurr(){
+      this.validateInput()
+      if (this.SALARY) {
+        this.valueInput = this.valueInput.toString().match(/\d+/)
+        this.valueInput = `${this.valueInput.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')} ₽`
+        }
+    },
+    clearCurr(){
+      this.valueInput = this.SALARY
+    },
+    validateInput(){
+      if (!this.SALARY) {
+        this.inputError = true 
+      } else { this.inputError = false }
+    },
+    calcDeduction(){
+      if (this.SALARY) this.CALC_DEDUCTION()
+    }
+    
+  },
+  computed: {
+    ...mapGetters(['SALARY', 'DEACREASE', 'VALIDATION', 'ARR_YEARS'])
+  },
+  watch: {
+    SALARY() {
+      this.VALIDATE()
+    },
+    DEACREASE() {
+      this.VALIDATE()
+    },
+    ARR_YEARS() {
+      this.VALIDATE()
+    }
+  },
+  mounted() {
+    if (this.SALARY) this.valueInput = this.SALARY.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ') + ' ₽'
   }
 }
 </script>
@@ -120,10 +167,16 @@ export default {
   background: linear-gradient(255.35deg, #DC3131 0.83%, rgba(255, 79, 79, 0) 108.93%), #FF5E56;
   box-shadow: 0px 0px 24px rgba(234, 0, 41, 0.33);
   border-radius: 6px;
+  border: none; 
+  outline: none;
   color: #FFFFFF;
   @include display-flex-cntr;
   cursor: pointer;
   transition: .2s ease-in-out;
+  &:disabled{
+    background: #BEC5CC !important;
+    box-shadow: none !important;
+  }
   &:hover{
     background: #EA0029;
     box-shadow: 0px 0px 24px rgba(234, 0, 41, 0.33);

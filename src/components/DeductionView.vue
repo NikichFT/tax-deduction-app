@@ -1,19 +1,21 @@
 <template>
     <div class="deduction-view">
-        <div class="deduction-view__title">Итого можете внести в качестве досрочных:</div>
-        <DeductionOption/>
-        <DeductionOption/>
-        <DeductionOption/>
-        <DeductionOption/>
+        <div class="deduction-view__title" v-if="ARR_YEARS.length">Итого можете внести в качестве досрочных:</div>
+        <DeductionOption v-for="(obj, year) in ARR_YEARS" :key="year" :yearId="year" :obj="obj"/>
     </div>
 </template>
 
 <script>
 import DeductionOption from './DeductionOption.vue'
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'DeductionView',
   components: {
     DeductionOption
+  },
+  computed: {
+    ...mapGetters(['ARR_YEARS'])
   }
 }
 </script>

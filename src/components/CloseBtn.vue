@@ -1,13 +1,18 @@
 <template>
-  <div class="close-btn-area">
+  <div class="close-btn-area"  @click="CLOSE_POPUP">
     <div class="close-btn">
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
-  name: 'CloseBtn'
+  name: 'CloseBtn',
+  methods: {
+    ...mapActions(['CLOSE_POPUP'])
+  }
 }
 </script>
 
